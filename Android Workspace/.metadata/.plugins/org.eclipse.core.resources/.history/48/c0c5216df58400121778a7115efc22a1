@@ -1,0 +1,82 @@
+package com.example.test;
+
+import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
+import android.os.Build;
+import android.os.Bundle;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.R.id;
+
+public class MainActivity extends Activity {
+
+	private static final String TAG = null;
+	private Camera              mCamera;
+    private SurfaceHolder       mHolder;
+    private int                 mFrameWidth;
+    private int                 mFrameHeight;
+    private byte[]              mFrame;
+    private volatile boolean    mThreadRun;
+    private byte[]              mBuffer;
+    private SurfaceTexture      mSf;
+    private SurfaceView			sf;
+	
+	@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        sf = (SurfaceView) findViewById(R.id.surfaceView1);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+    
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD) public boolean openCamera() {
+        Log.i(TAG, "Opening Camera");
+        mCamera = null;
+
+        try {
+            mCamera = Camera.open();
+        }
+        catch (Exception e){
+            Log.e(TAG, "Camera is not available (in use or does not exist): " + e.getLocalizedMessage());
+        }
+
+        if(mCamera == null/* && /*Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD*/) {
+            for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); ++camIdx) {
+                try {
+                    mCamera = Camera.open(camIdx);
+                }
+                catch (RuntimeException e) {
+                    Log.e(TAG, "Camera #" + camIdx + "failed to open: " + e.getLocalizedMessage());
+                }
+            }
+        }
+
+        if(mCamera == null) {
+            Log.e(TAG, "Can't open any camera");
+            return false;
+        }
+
+        mCamera.setPreviewCallbackWithBuffer(new PreviewCallback() {
+            public void onPreviewFrame(byte[] data, Camera camera) {
+                synchronized (sf) {
+                    System.arraycopy(data, 0, mFrame, 0, data.length);
+                    //SampleViewBase.this.notify();
+                }
+                camera.addCallbackBuffer(mBuffer);
+            }
+        });
+
+        return true;
+    }
+}

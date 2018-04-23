@@ -1,0 +1,49 @@
+package org.opencv.samples.colorblobdetect;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
+
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+
+public class BluetoothConnection {
+	public	BluetoothAdapter	ba;
+	public	BluetoothSocket		bs;
+	public 	BluetoothDevice		bd;
+	public 	InputStream			is;
+	public 	OutputStream		os;
+	
+	public BluetoothConnection() {
+		// TODO Auto-generated constructor stub
+		ba = BluetoothAdapter.getDefaultAdapter();
+		ba.getState();
+	}
+	
+	public void BluetoothOn() {
+		ba.enable();
+	}
+	
+	public void BluetoothOff() {
+		ba.disable();
+	}
+	
+	public void DiscoverBluetoothDevice() {
+		ba.disable();
+	}
+	
+	void setdevice(){
+    	Set<BluetoothDevice> pairedDevices = ba.getBondedDevices();
+        if(pairedDevices.size() > 0){
+            for(BluetoothDevice device : pairedDevices){
+                
+                if(device1.getName().equalsIgnoreCase("Bluetooth_V3")){
+                	bd = device;
+                }
+            }
+        }
+    };
+	
+	
+}

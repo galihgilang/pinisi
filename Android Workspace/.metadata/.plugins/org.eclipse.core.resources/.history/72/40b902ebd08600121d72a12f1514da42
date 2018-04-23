@@ -1,0 +1,49 @@
+package org.opencv.samples.colorblobdetect;
+
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
+public class kompas {
+	
+	public	SensorManager 	sm;
+	public	Sensor			s;
+	public 	double			degree;
+	
+	public kompas {
+		sm = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        s = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        sm.registerListener(new SensorEventListener() {
+			
+			@Override
+			public void onSensorChanged(SensorEvent event) {
+				// TODO Auto-generated method stub
+				
+				//altitude.setText(String.valueOf(event.values[0]));
+				//latitude.setText(String.valueOf(event.values[1]));
+				//longitude.setText(String.valueOf(event.values[2]));
+				double rad = Math.atan2(event.values[0], event.values[2]);
+				degree = Math.toDegrees(rad) + 180;
+				if(degree >=360)degree-=360;
+				//kompas.setText(String.valueOf(degree));
+				
+			}
+			
+			@Override
+			public void onAccuracyChanged(Sensor sensor, int accuracy) {
+				// TODO Auto-generated method stub
+				//kompas.setText(String.valueOf(accuracy));
+				
+			}
+		}, s, SensorManager.SENSOR_DELAY_UI);
+        if (s != null){
+          // Success! There's a magnetometer.
+          }
+        else {
+          // Failure! No magnetometer.
+          }
+	}
+
+}
